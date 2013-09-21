@@ -1,0 +1,30 @@
+#Use <0> for the area plugin's specific name (world, claim, region, residence, etc).
+#Use <1> for the area's owner name OR the world name. 
+#  This is dependent on the area and if the plugin supports single "owners".
+#Use <2> for the name of the message is being sent to.
+Flag:
+  AllowEntry:
+    Description: Allows or denies player entry into the area.
+    Default: true
+    AreaMessage: §cYou are not allowed in §6<1>§c's <0>.
+    WorldMessage: §cYou are not allowed to enter §6<1>§c.
+  AllowLeave:
+    Description: Allows or denies a player from leaving a area.
+    Default: true
+    AreaMessage: §cYou are not allowed to leave §6<1>§c's <0>.
+    WorldMessage: §cYou are not allowed to leave §6<1>§c.
+  NotifyEnter:
+    Description: Area entry notifications for non-owners.
+    Default: false
+    AreaMessage: §bNow entering §6<1>§b's <0>.
+    WorldMessage: §bNow entering §6<1>§b.
+  NotifyExit:
+    Description: Area entry notifications for non-owners.
+    Default: false
+    AreaMessage: §bNow leaving §6<1>§b's <0>.
+    WorldMessage: §bNow leaving §6<1>§b.
+  Flight:
+    Description: Allows flight within the area.
+    Default: false
+    AreaMessage: §eFlight §bis now enabled.
+    WorldMessage: §eFlight §bis now enabled.
