@@ -197,6 +197,10 @@ public class FlagsBorderPatrol extends JavaPlugin {
 				player.sendMessage(e.getArea().getMessage(flag));
 				player.setAllowFlight(true);
 			} else {
+				// Player can fly because of permission or trust.
+				if(flag.hasBypassPermission(player) ||
+				e.getArea().getTrustList(flag).contains(player.getName())) { return; }
+				
 				// Player entered a flight disabled area
 				// We need to take them out of the sky gently.
 				// (of course if we didn't, it sure would be fun to watch)
