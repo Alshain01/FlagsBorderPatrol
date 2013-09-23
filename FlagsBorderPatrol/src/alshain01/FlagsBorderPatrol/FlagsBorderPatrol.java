@@ -192,10 +192,6 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			Player player = e.getPlayer();
 			if(flag == null) { return; }
 
-			// Player can fly because of permission or trust.
-			if(flag.hasBypassPermission(player) || 
-				area.getTrustList(flag).contains(player.getName())) { return true; }
-			
 			// Bypass if the server allows flight or the player is in creative.
 			if(Bukkit.getServer().getAllowFlight() || player.getGameMode() == GameMode.CREATIVE) { return; }
 			
