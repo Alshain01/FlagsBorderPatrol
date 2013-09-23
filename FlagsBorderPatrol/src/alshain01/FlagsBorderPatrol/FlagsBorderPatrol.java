@@ -190,6 +190,10 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			Flag flag = Flags.instance.getRegistrar().getFlag("Flight");
 			Player player = e.getPlayer();
 			if(flag == null) { return; }
+
+			// Player can fly because of permission or trust.
+			if(flag.hasBypassPermission(player) || 
+				area.getTrustList(flag).contains(player.getName())) { return true; }
 			
 			if(e.getArea().getValue(flag, false)) {
 				// Player entered a flight allowed area
