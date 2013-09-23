@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -190,6 +191,9 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			Flag flag = Flags.instance.getRegistrar().getFlag("Flight");
 			Player player = e.getPlayer();
 			if(flag == null) { return; }
+			
+			// Bypass if the server allows flight or the player is in creative.
+			if(Bukkit.getServer().getAllowFlight() || player.getGameMode() == GameMode.CREATIVE) { return; }
 			
 			if(e.getArea().getValue(flag, false)) {
 				// Player entered a flight allowed area
