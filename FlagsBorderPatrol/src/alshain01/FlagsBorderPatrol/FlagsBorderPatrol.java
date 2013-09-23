@@ -188,18 +188,20 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		private void onPlayerChangedArea(PlayerChangedAreaEvent e) {
 			// Look at that, the flag I could never get working... works!
 			// ... and it was so simple all along.
-			Flag flag = Flags.instance.getRegistrar().getFlag("Flight");
+			if(Bukkit.getServer().getAllowFlight()) { return; }
+			
 			Player player = e.getPlayer();
+			if(player.getGameMode() == GameMode.CREATIVE) { return; }
+			
+			Flag flag = Flags.instance.getRegistrar().getFlag("Flight");
 			if(flag == null) { return; }
-
-			// Bypass if the server allows flight or the player is in creative.
-			if(Bukkit.getServer().getAllowFlight() || player.getGameMode() == GameMode.CREATIVE) { return; }
 			
 			if(e.getArea().getValue(flag, false)) {
 				// Player entered a flight allowed area
-				// doesn't matter if they could fly before
-				player.sendMessage(e.getArea().getMessage(flag));
-				player.setAllowFlight(true);
+				if(!player.getAllowFlight()) {
+					player.sendMessage(e.getArea().getMessage(flag));
+					player.setAllowFlight(true);
+				}
 			} else {
 				// Player can fly because of permission or trust.
 				if(flag.hasBypassPermission(player) ||
