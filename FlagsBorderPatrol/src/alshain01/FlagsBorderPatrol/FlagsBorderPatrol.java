@@ -160,22 +160,24 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			Player player = e.getPlayer();
 			Registrar flags = Flags.instance.getRegistrar();
 
-			// Don't welcome them to the claim and then forcibly remove them.
+			// Don't welcome them to the area and then forcibly remove them.
 			if (canCrossBorder(areaTo, e.getPlayer(), flags.getFlag("AllowEntry"), false) 
 					&& canCrossBorder(areaFrom, e.getPlayer(), flags.getFlag("AllowLeave"), false)) {
 				
 				// Player has not been forcibly returned.
 				// Check to see if we should notify them.
 				// Don't bother the area owner.
-				if (areaTo.getValue(flags.getFlag("NotifyEnter"), false) 
+				Flag ne = flags.getFlag("NotifyEnter");
+				Flag nx = flags.getFlag("NotifyExit");
+				if (ne != null && areaTo.getValue(ne, false) 
 						&& !areaTo.getOwners().contains(player.getName())) {
 					// Send the message
-					e.getPlayer().sendMessage(areaTo.getMessage(flags.getFlag("NotifyEnter"))
+					e.getPlayer().sendMessage(areaTo.getMessage(ne)
 							.replaceAll("<2>", player.getDisplayName()));
-				} else if (areaFrom.getValue(flags.getFlag("NotifyExit"), false)
+				} else if (nx != null && areaFrom.getValue(nx, false)
 						&& !areaFrom.getOwners().contains(player.getName())) { // Only send one notification at any time.
 					// Send the message
-					e.getPlayer().sendMessage(areaFrom.getMessage(flags.getFlag("NotifyExit"))
+					e.getPlayer().sendMessage(areaFrom.getMessage(nx)
 							.replaceAll("<2>", player.getDisplayName()));
 				}
 			}
