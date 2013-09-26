@@ -35,6 +35,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -64,12 +65,20 @@ public class FlagsBorderPatrol extends JavaPlugin {
 	 */
 	@Override
 	public void onEnable(){
+		PluginManager pm =  Bukkit.getServer().getPluginManager();
+
+		if(!pm.isPluginEnabled("Flags")) {
+		    this.getLogger().severe("Flags was not found. Shutting down.");
+		    pm.disablePlugin(this);
+		}
+		
 		// Connect to the data file
 		ModuleYML dataFile = new ModuleYML(this, "flags.yml");
 		
 		// Register with Flags
 		Registrar flags = Flags.instance.getRegistrar();
 		for(String f : dataFile.getModuleData().getConfigurationSection("Flag").getKeys(false)) {
+			Flags.instance.Debug(f);
 			ConfigurationSection data = dataFile.getModuleData().getConfigurationSection("Flag." + f);
 
 			
@@ -88,7 +97,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			// Register it!
 			// Be sure to send a plug-in name or group description for the help command!
 			// It can be this.getName() or another string.
-			flags.register(f, desc, def, "BorderCrossing", area, world);
+			flags.register(f, desc, def, "BorderPatrol", area, world);
 		}			
 		
 		// Slows down message spam.
