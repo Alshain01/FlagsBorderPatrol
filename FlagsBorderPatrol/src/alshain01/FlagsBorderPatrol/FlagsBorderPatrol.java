@@ -154,7 +154,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 				// Player was not told that recently
 				if(canTrackPlayer) { playersMessaged.add(player.getName());	}
 				player.sendMessage(area.getMessage(flag)
-						.replaceAll("<0>", area.getAreaType().toLowerCase()));
+						.replaceAll("\\{Player\\}", player.getName()));
 			}
 			return false;
 		}
@@ -182,12 +182,12 @@ public class FlagsBorderPatrol extends JavaPlugin {
 						&& !areaTo.getOwners().contains(player.getName())) {
 					// Send the message
 					e.getPlayer().sendMessage(areaTo.getMessage(ne)
-							.replaceAll("<2>", player.getDisplayName()));
+							.replaceAll("\\{Player\\}", player.getName()));
 				} else if (nx != null && areaFrom.getValue(nx, false)
 						&& !areaFrom.getOwners().contains(player.getName())) { // Only send one notification at any time.
 					// Send the message
 					e.getPlayer().sendMessage(areaFrom.getMessage(nx)
-							.replaceAll("<2>", player.getDisplayName()));
+							.replaceAll("\\{Player\\}", player.getName()));
 				}
 			}
 		}
