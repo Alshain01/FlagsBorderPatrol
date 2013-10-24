@@ -76,9 +76,8 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		ModuleYML dataFile = new ModuleYML(this, "flags.yml");
 		
 		// Register with Flags
-		Registrar flags = Flags.instance.getRegistrar();
+		Registrar flags = Flags.getRegistrar();
 		for(String f : dataFile.getModuleData().getConfigurationSection("Flag").getKeys(false)) {
-			Flags.instance.Debug(f);
 			ConfigurationSection data = dataFile.getModuleData().getConfigurationSection("Flag." + f);
 
 			
@@ -101,7 +100,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		}			
 		
 		// Slows down message spam.
-		canTrackPlayer = Flags.instance.checkAPI("1.3.2");
+		canTrackPlayer = Flags.checkAPI("1.3.2");
 		if(canTrackPlayer) {
 			playerMessageCleanupRunnable = new PlayerCleanupTask();
 			playerCleanupTask = playerMessageCleanupRunnable.runTaskTimerAsynchronously(this, 0, 100);
@@ -134,7 +133,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		 */
 		@EventHandler (ignoreCancelled = true)
 		private void onPlayerChangeArea(PlayerChangedAreaEvent e) {
-			Registrar flags = Flags.instance.getRegistrar();
+			Registrar flags = Flags.getRegistrar();
 			
 			if(!canCrossBorder(e.getArea(), e.getPlayer(), flags.getFlag("AllowEntry"), true) || 
 					!canCrossBorder(e.getAreaLeft(), e.getPlayer(),  flags.getFlag("AllowLeave"), true)) {
@@ -166,7 +165,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			Area areaTo = e.getArea();
 			Area areaFrom = e.getAreaLeft();
 			Player player = e.getPlayer();
-			Registrar flags = Flags.instance.getRegistrar();
+			Registrar flags = Flags.getRegistrar();
 
 			// Don't welcome them to the area and then forcibly remove them.
 			if (canCrossBorder(areaTo, e.getPlayer(), flags.getFlag("AllowEntry"), false) 
@@ -201,7 +200,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			Player player = e.getPlayer();
 			if(player.getGameMode() == GameMode.CREATIVE) { return; }
 			
-			Flag flag = Flags.instance.getRegistrar().getFlag("Flight");
+			Flag flag = Flags.getRegistrar().getFlag("Flight");
 			if(flag == null) { return; }
 			
 			if(e.getArea().getValue(flag, false)) {
