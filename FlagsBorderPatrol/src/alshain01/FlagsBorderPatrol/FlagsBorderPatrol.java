@@ -145,7 +145,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			if (flag == null) { return true; }
 			
 			// Player can enter because of flag setting, permission, or trust.
-			if(area.getValue(flag, false) || flag.hasBypassPermission(player) 
+			if(area.getValue(flag, false) || player.hasPermission(flag.getBypassPermission()) 
 					|| area.getTrustList(flag).contains(player.getName())) { return true; }
 			
 			// Player is not allowed to enter or leave this area.
@@ -211,7 +211,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 				}
 			} else {
 				// Player can fly because of permission or trust.
-				if(flag.hasBypassPermission(player) ||
+				if(player.hasPermission(flag.getBypassPermission()) ||
 				e.getArea().getTrustList(flag).contains(player.getName())) { return; }
 				
 				// Player entered a flight disabled area
