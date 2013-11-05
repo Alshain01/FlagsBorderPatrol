@@ -72,6 +72,11 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		    pm.disablePlugin(this);
 		}
 		
+		if(!Flags.getBorderPatrolEnabled()) {
+			this.getLogger().severe("Flags' Border Patrol is disabled. Shutting down.");
+		    pm.disablePlugin(this);
+		}
+		
 		// Connect to the data file
 		ModuleYML dataFile = new ModuleYML(this, "flags.yml");
 		
