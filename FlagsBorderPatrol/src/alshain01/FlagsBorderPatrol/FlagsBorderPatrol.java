@@ -24,6 +24,13 @@
 
 package alshain01.FlagsBorderPatrol;
 
+import io.github.alshain01.Flags.Flag;
+import io.github.alshain01.Flags.Flags;
+import io.github.alshain01.Flags.ModuleYML;
+import io.github.alshain01.Flags.Registrar;
+import io.github.alshain01.Flags.area.Area;
+import io.github.alshain01.Flags.events.PlayerChangedAreaEvent;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,13 +46,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import alshain01.Flags.Flag;
-import alshain01.Flags.Flags;
-import alshain01.Flags.ModuleYML;
-import alshain01.Flags.Registrar;
-import alshain01.Flags.area.Area;
-import alshain01.Flags.events.PlayerChangedAreaEvent;
 
 /**
  * Flags - Border Patrol 
