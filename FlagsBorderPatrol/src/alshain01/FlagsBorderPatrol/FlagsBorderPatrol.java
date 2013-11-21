@@ -36,7 +36,6 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -45,7 +44,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 /**
  * Flags - Border Patrol 
@@ -54,6 +52,49 @@ import org.bukkit.scheduler.BukkitTask;
  * @author Alshain01
  */
 public class FlagsBorderPatrol extends JavaPlugin {
+	// Contains a list of players who have recently been sent an
+	// AllowEntry/AllowLeave message
+	private final Set<String> playersMessaged = new HashSet<String>();
+
+	private boolean canTrackPlayer;
+	
+	/**
+	 * Called when this module is enabled
+	 */
+	@Override
+	public void onEnable() {
+		final PluginManager pm = Bukkit.getServer().getPluginManager();
+
+		if (!pm.isPluginEnabled("Flags")) {
+			getLogger().severe("Flags was not found. Shutting down.");
+			pm.disablePlugin(this);
+		}
+
+		if (!Flags.getBorderPatrolEnabled()) {
+			getLogger().severe("Flags Border Patrol is disabled. Shutting down.");
+			pm.disablePlugin(this);
+		}
+
+		// Connect to the data file and register the flags
+		Flags.getRegistrar().register(new ModuleYML(this, "flags.yml"), "BorderPatrol");
+
+		// Slows down message spam.
+		canTrackPlayer = Flags.checkAPI("1.3.2");
+		if (canTrackPlayer) {
+			new PlayerCleanupTask().runTaskTimerAsynchronously(this, 0, 100);
+		}
+
+		// Load plug-in events and data
+		Bukkit.getServer().getPluginManager().registerEvents(new AreaListener(), this);
+	}
+	
+	private class PlayerCleanupTask extends BukkitRunnable {
+		@Override
+		public void run() {
+			playersMessaged.clear();
+		}
+	}
+
 	/*
 	 * The event handlers for the flags we created earlier
 	 */
@@ -173,85 +214,5 @@ public class FlagsBorderPatrol extends JavaPlugin {
 				player.setAllowFlight(false);
 			}
 		}
-	}
-
-	private class PlayerCleanupTask extends BukkitRunnable {
-		@Override
-		public void run() {
-			playersMessaged.clear();
-		}
-	}
-
-	// Contains a list of players who have recently been sent an
-	// AllowEntry/AllowLeave message
-	private final Set<String> playersMessaged = new HashSet<String>();
-	private BukkitTask playerCleanupTask;
-
-	private PlayerCleanupTask playerMessageCleanupRunnable;
-
-	private boolean canTrackPlayer;
-
-	@Override
-	public void onDisable() {
-		if (canTrackPlayer) {
-			playerCleanupTask.cancel();
-		}
-	}
-
-	/**
-	 * Called when this module is enabled
-	 */
-	@Override
-	public void onEnable() {
-		final PluginManager pm = Bukkit.getServer().getPluginManager();
-
-		if (!pm.isPluginEnabled("Flags")) {
-			getLogger().severe("Flags was not found. Shutting down.");
-			pm.disablePlugin(this);
-		}
-
-		if (!Flags.getBorderPatrolEnabled()) {
-			getLogger().severe("Flags' Border Patrol is disabled. Shutting down.");
-			pm.disablePlugin(this);
-		}
-
-		// Connect to the data file
-		final ModuleYML dataFile = new ModuleYML(this, "flags.yml");
-
-		// Register with Flags
-		final Registrar flags = Flags.getRegistrar();
-		for (final String f : dataFile.getModuleData()
-				.getConfigurationSection("Flag").getKeys(false)) {
-			final ConfigurationSection data = dataFile.getModuleData()
-					.getConfigurationSection("Flag." + f);
-
-			// The description that appears when using help commands.
-			final String desc = data.getString("Description");
-
-			// The default value.
-			final boolean def = data.getBoolean("Default");
-
-			// The default message players get while in the area.
-			final String area = data.getString("AreaMessage");
-
-			// The default message players get while in an world.
-			final String world = data.getString("WorldMessage");
-
-			// Register it!
-			// Be sure to send a plug-in name or group description for the help
-			// command! It can be this.getName() or another string.
-			flags.register(f, desc, def, "BorderPatrol", area, world);
-		}
-
-		// Slows down message spam.
-		canTrackPlayer = Flags.checkAPI("1.3.2");
-		if (canTrackPlayer) {
-			playerMessageCleanupRunnable = new PlayerCleanupTask();
-			playerCleanupTask = 
-					playerMessageCleanupRunnable.runTaskTimerAsynchronously(this, 0, 100);
-		}
-
-		// Load plug-in events and data
-		Bukkit.getServer().getPluginManager().registerEvents(new AreaListener(), this);
 	}
 }
