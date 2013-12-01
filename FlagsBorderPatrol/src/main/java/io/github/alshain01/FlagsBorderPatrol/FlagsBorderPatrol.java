@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package alshain01.FlagsBorderPatrol;
+package io.github.alshain01.FlagsBorderPatrol;
 
 import io.github.alshain01.Flags.Flag;
 import io.github.alshain01.Flags.Flags;
