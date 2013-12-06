@@ -16,7 +16,7 @@
 	<repositories>
 		<repository>
 			<id>flags-repo</id>
-			<url>http://pages.suddenlink.net/alshain01/flags/snapshot/</url>
+			<url>http://pages.suddenlink.net/alshain01/flags/repository/</url>
 		</repository>
 	</repositories>
 
