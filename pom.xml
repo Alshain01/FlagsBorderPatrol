@@ -5,7 +5,13 @@
 	<version>1.0.4</version>
 	<name>FlagsBorderPatrol</name>
 	<description>Module that adds border crossing flags to the Flags plugin.</description>
-	<url>http://dev.bukkit.org/bukkit-plugins/flags/</url> 
+	<url>http://dev.bukkit.org/bukkit-plugins/flags/</url>
+
+    <properties>
+        <project.author>Alshain01</project.author>
+        <project.main>io.github.alshain01.FlagsBorderPatrol.FlagsBorderPatrol</project.main>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
 	<repositories>
 		<repository>
@@ -29,31 +35,12 @@
 		<tag>master</tag>
 	</scm>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
 		<finalName>${project.name}</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>
 
 		<plugins>
-			<plugin>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<additionalProjectnatures>
-						<projectnature>org.eclipse.m2e.core.maven2Nature</projectnature>
-					</additionalProjectnatures>
-					<buildcommands>
-						<buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
-						<buildcommand>org.eclipse.m2e.core.maven2Builder</buildcommand>
-					</buildcommands>
-					<useProjectReferences>false</useProjectReferences>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>

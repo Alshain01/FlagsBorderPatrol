@@ -1,7 +1,7 @@
-name: FlagsBorderPatrol
-version: 1.0.4
-description: Module that adds border crossing flags to the Flags plugin.
-author: Alshain01
-website: http://dev.bukkit.org/bukkit-plugins/flags/
-main: io.github.alshain01.FlagsBorderPatrol.FlagsBorderPatrol
+name: ${project.name}
+version: ${project.version}
+description: ${project.description}
+author: ${project.author}
+website: ${project.url}
+main: ${project.main}
 depend: [Flags]
