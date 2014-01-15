@@ -25,5 +25,5 @@ Flag:
     Description: Allows flight within the area.
     Default: false
     Player: true
-    AreaMessage: '&eFlight &bis now enabled.'
-    WorldMessage: '&eFlight &bis now enabled.'
+    AreaMessage: '&eFlight&b is now enabled.'
+    WorldMessage: '&eFlight&b is now enabled.'
