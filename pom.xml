@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>io.github.alshain01</groupId>
 			<artifactId>Flags</artifactId>
-			<version>1.3.0-SNAPSHOT</version>
+			<version>LATEST</version>
 		</dependency>
 	</dependencies>
 
