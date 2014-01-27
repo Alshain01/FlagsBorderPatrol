@@ -9,7 +9,7 @@
 
     <properties>
         <project.author>Alshain01</project.author>
-        <project.main>io.github.alshain01.FlagsBorderPatrol.FlagsBorderPatrol</project.main>
+        <project.main>io.github.alshain01.flagsborderpatrol.FlagsBorderPatrol</project.main>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
