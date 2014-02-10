@@ -26,15 +26,14 @@ package io.github.alshain01.flagsborderpatrol;
 import io.github.alshain01.flags.Flag;
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.ModuleYML;
-import io.github.alshain01.flags.Registrar;
 import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 
 import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -170,30 +169,24 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		 */
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onPlayerChangedArea(PlayerChangedAreaEvent e) {
-			if (Bukkit.getServer().getAllowFlight()) {
-				return;
-			}
+			if (Bukkit.getServer().getAllowFlight()) { return; }
 
 			final Player player = e.getPlayer();
-			if (player.getGameMode() == GameMode.CREATIVE) {
-				return;
-			}
+			if (player.getGameMode() == GameMode.CREATIVE) { return; }
 
 			final Flag flag = flags.get("Flight");
-			if (flag == null) {
-				return;
-			}
+			if (flag == null) {	return;	}
 
-			if (e.getArea().getValue(flag, false)) {
+            Area area = e.getArea();
+			if (area.getValue(flag, false)) {
 				// Player entered a flight allowed area
 				if (!player.getAllowFlight()) {
-					player.sendMessage(e.getArea().getMessage(flag));
+					player.sendMessage(area.getMessage(flag));
 					player.setAllowFlight(true);
 				}
 			} else {
-				// Player can fly because of permission or trust.
-				if (player.hasPermission(flag.getBypassPermission())
-						|| e.getArea().hasTrust(flag, player)) {
+				if (player.hasPermission(flag.getBypassPermission()) || area.hasTrust(flag, player)) {
+                    // Player can continue to fly because of permission or trust.
 					return;
 				}
 
@@ -202,11 +195,10 @@ public class FlagsBorderPatrol extends JavaPlugin {
 				// (of course if we didn't, it sure would be fun to watch)
 				if (player.isFlying()) {
 					// Teleport the player to the ground so they don't die.
-					// Have fun deciphering this next line.
-					player.teleport(player.getWorld()
-							.getHighestBlockAt(player.getLocation())
-							.getLocation().add(0, 1, 0),
-							TeleportCause.PLUGIN);
+					Location tpLoc = player.getWorld()
+                            .getHighestBlockAt(player.getLocation())
+                            .getLocation().add(0, 1, 0);
+					player.teleport(tpLoc, TeleportCause.PLUGIN);
 					player.setFlying(false);
 				}
 				player.setAllowFlight(false);
