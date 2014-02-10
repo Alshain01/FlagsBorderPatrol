@@ -28,11 +28,10 @@ import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.ModuleYML;
 import io.github.alshain01.flags.Registrar;
 import io.github.alshain01.flags.area.Area;
+import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -67,10 +66,14 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		}
 
 		// Connect to the data file and register the flags
-		Flags.getRegistrar().register(new ModuleYML(this, "flags.yml"), "BorderPatrol");
+		Set<Flag> flags = Flags.getRegistrar().register(new ModuleYML(this, "flags.yml"), "BorderPatrol");
+        Map<String, Flag> flagMap = new HashMap<String, Flag>();
+        for(Flag f : flags) {
+            flagMap.put(f.getName(), f);
+        }
 
 		// Load plug-in events and data
-		Bukkit.getServer().getPluginManager().registerEvents(new AreaListener(this), this);
+		Bukkit.getServer().getPluginManager().registerEvents(new AreaListener(this, flagMap), this);
 	}
 	
 	/*
@@ -79,12 +82,14 @@ public class FlagsBorderPatrol extends JavaPlugin {
 	private class AreaListener implements Listener {
         // Contains a list of players who have recently been sent an
         // AllowEntry/AllowLeave message in order to prevent spamming
-        private final Set<String> playersMessaged = new HashSet<String>();
         private final JavaPlugin plugin;
+        private final Map<String, Flag> flags;
+        private final Set<String> playersMessaged = new HashSet<String>();
         private final boolean canTrackPlayer = Flags.checkAPI("1.3.2");
 
-        AreaListener(JavaPlugin plugin) {
+        AreaListener(JavaPlugin plugin, Map<String, Flag> flags) {
             this.plugin = plugin;
+            this.flags = flags;
         }
 
 		private boolean canCrossBorder(Area area, Player player, Flag flag,	boolean notify) {
@@ -123,10 +128,8 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		 */
 		@EventHandler(ignoreCancelled = true)
 		private void onPlayerChangeArea(PlayerChangedAreaEvent e) {
-			final Registrar flags = Flags.getRegistrar();
-
-			if (!canCrossBorder(e.getArea(), e.getPlayer(),	flags.getFlag("AllowEntry"), true)
-					|| !canCrossBorder(e.getAreaLeft(), e.getPlayer(), flags.getFlag("AllowLeave"), true)) {
+			if (!canCrossBorder(e.getArea(), e.getPlayer(),	flags.get("AllowEntry"), true)
+					|| !canCrossBorder(e.getAreaLeft(), e.getPlayer(), flags.get("AllowLeave"), true)) {
 				e.setCancelled(true);
 			}
 		}
@@ -139,17 +142,16 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			final Area areaTo = e.getArea();
 			final Area areaFrom = e.getAreaLeft();
 			final Player player = e.getPlayer();
-			final Registrar flags = Flags.getRegistrar();
 
 			// Don't welcome them to the area and then forcibly remove them.
-			if (canCrossBorder(areaTo, e.getPlayer(), flags.getFlag("AllowEntry"), false)
-					&& canCrossBorder(areaFrom, e.getPlayer(), flags.getFlag("AllowLeave"), false)) {
+			if (canCrossBorder(areaTo, e.getPlayer(), flags.get("AllowEntry"), false)
+					&& canCrossBorder(areaFrom, e.getPlayer(), flags.get("AllowLeave"), false)) {
 
 				// Player has not been forcibly returned.
 				// Check to see if we should notify them.
 				// Don't bother the area owner.
-				final Flag ne = flags.getFlag("NotifyEnter");
-				final Flag nx = flags.getFlag("NotifyExit");
+				final Flag ne = flags.get("NotifyEnter");
+				final Flag nx = flags.get("NotifyExit");
 				if (ne != null && areaTo.getValue(ne, false)
 						&& !areaTo.getOwners().contains(player.getName())) {
 					// Send the message
@@ -177,7 +179,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 				return;
 			}
 
-			final Flag flag = Flags.getRegistrar().getFlag("Flight");
+			final Flag flag = flags.get("Flight");
 			if (flag == null) {
 				return;
 			}
