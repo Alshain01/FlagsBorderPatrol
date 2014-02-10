@@ -32,6 +32,7 @@ import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -45,18 +46,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
- * Flags - Border Patrol 
- * Module that adds border crossing flags to the plug-in Flags.
- * 
- * @author Alshain01
+ * Flags Border Patrol - Module that adds border crossing flags to the plug-in Flags.
  */
 public class FlagsBorderPatrol extends JavaPlugin {
-	// Contains a list of players who have recently been sent an
-	// AllowEntry/AllowLeave message
-	private final Set<String> playersMessaged = new HashSet<String>();
-
-	private boolean canTrackPlayer;
-	
 	/**
 	 * Called when this module is enabled
 	 */
@@ -77,27 +69,24 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		// Connect to the data file and register the flags
 		Flags.getRegistrar().register(new ModuleYML(this, "flags.yml"), "BorderPatrol");
 
-		// Slows down message spam.
-		canTrackPlayer = Flags.checkAPI("1.3.2");
-		if (canTrackPlayer) {
-			new PlayerCleanupTask().runTaskTimerAsynchronously(this, 0, 100);
-		}
-
 		// Load plug-in events and data
-		Bukkit.getServer().getPluginManager().registerEvents(new AreaListener(), this);
+		Bukkit.getServer().getPluginManager().registerEvents(new AreaListener(this), this);
 	}
 	
-	private class PlayerCleanupTask extends BukkitRunnable {
-		@Override
-		public void run() {
-			playersMessaged.clear();
-		}
-	}
-
 	/*
 	 * The event handlers for the flags we created earlier
 	 */
 	private class AreaListener implements Listener {
+        // Contains a list of players who have recently been sent an
+        // AllowEntry/AllowLeave message in order to prevent spamming
+        private final Set<String> playersMessaged = new HashSet<String>();
+        private final JavaPlugin plugin;
+        private final boolean canTrackPlayer = Flags.checkAPI("1.3.2");
+
+        AreaListener(JavaPlugin plugin) {
+            this.plugin = plugin;
+        }
+
 		private boolean canCrossBorder(Area area, Player player, Flag flag,	boolean notify) {
 			if (flag == null) {
 				return true;
@@ -111,10 +100,18 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			}
 
 			// Player is not allowed to enter or leave this area.
-			if (notify && !playersMessaged.contains(player.getName())) {
+            final String pName = player.getName();
+			if (notify && !playersMessaged.contains(pName)) {
 				// Player was not told that recently
 				if (canTrackPlayer) {
-					playersMessaged.add(player.getName());
+					playersMessaged.add(pName);
+                    new BukkitRunnable() {
+                        public void run() {
+                            if(playersMessaged.contains(pName)) {
+                                playersMessaged.remove(pName);
+                            }
+                        }
+                    }.runTaskLater(plugin, 100);
 				}
 				player.sendMessage(area.getMessage(flag, player.getName()));
 			}

@@ -3,5 +3,5 @@ version: ${project.version}
 description: ${project.description}
 author: ${project.author}
 website: ${project.url}
-main: ${project.main}
+main: ${project.groupId}.${project.name}
 depend: [Flags]
