@@ -27,7 +27,7 @@ import io.github.alshain01.flags.Flag;
 import io.github.alshain01.flags.Flags;
 import io.github.alshain01.flags.ModuleYML;
 import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.events.PlayerChangedAreaEvent;
+import io.github.alshain01.flags.events.PlayerChangedUniqueAreaEvent;
 
 import java.util.*;
 
@@ -126,7 +126,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		 * Event handler for AllowEntry and AllowLeave
 		 */
 		@EventHandler(ignoreCancelled = true)
-		private void onPlayerChangeArea(PlayerChangedAreaEvent e) {
+		private void onPlayerChangeArea(PlayerChangedUniqueAreaEvent e) {
 			if (!canCrossBorder(e.getArea(), e.getPlayer(),	flags.get("AllowEntry"), true)
 					|| !canCrossBorder(e.getAreaLeft(), e.getPlayer(), flags.get("AllowLeave"), true)) {
 				e.setCancelled(true);
@@ -137,7 +137,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		 * Event Handler for NotifyEnter and NotifyExit
 		 */
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onPlayerChangeAreaMonitor(PlayerChangedAreaEvent e) {
+		private void onPlayerChangeAreaMonitor(PlayerChangedUniqueAreaEvent e) {
 			final Area areaTo = e.getArea();
 			final Area areaFrom = e.getAreaLeft();
 			final Player player = e.getPlayer();
@@ -168,7 +168,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		 * Event Handler for Flight
 		 */
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onPlayerChangedArea(PlayerChangedAreaEvent e) {
+		private void onPlayerChangedArea(PlayerChangedUniqueAreaEvent e) {
 			if (Bukkit.getServer().getAllowFlight()) { return; }
 
 			final Player player = e.getPlayer();
