@@ -84,7 +84,6 @@ public class FlagsBorderPatrol extends JavaPlugin {
         private final JavaPlugin plugin;
         private final Map<String, Flag> flags;
         private final Set<String> playersMessaged = new HashSet<String>();
-        private final boolean canTrackPlayer = Flags.checkAPI("1.3.2");
 
         AreaListener(JavaPlugin plugin, Map<String, Flag> flags) {
             this.plugin = plugin;
@@ -107,16 +106,14 @@ public class FlagsBorderPatrol extends JavaPlugin {
             final String pName = player.getName();
 			if (notify && !playersMessaged.contains(pName)) {
 				// Player was not told that recently
-				if (canTrackPlayer) {
-					playersMessaged.add(pName);
-                    new BukkitRunnable() {
-                        public void run() {
-                            if(playersMessaged.contains(pName)) {
-                                playersMessaged.remove(pName);
-                            }
+                playersMessaged.add(pName);
+                new BukkitRunnable() {
+                    public void run() {
+                        if(playersMessaged.contains(pName)) {
+                            playersMessaged.remove(pName);
                         }
-                    }.runTaskLater(plugin, 100);
-				}
+                    }
+                }.runTaskLater(plugin, 100);
 				player.sendMessage(area.getMessage(flag, player.getName()));
 			}
 			return false;
@@ -164,9 +161,10 @@ public class FlagsBorderPatrol extends JavaPlugin {
 
             /*
 		     * Event Handler for Flight
-		     */
-            final Flag flag = flags.get("Flight");
-            if (flag != null) {
+             */
+            if (!Bukkit.getServer().getAllowFlight() && player.getGameMode() != GameMode.CREATIVE) {
+                // The server doesn't allow flight all the time and the game mode is not creative
+                final Flag flag = flags.get("Flight");
                 if (areaTo.getValue(flag, false)) {
                     // Player entered a flight allowed area
                     if (!player.getAllowFlight()) {
@@ -174,22 +172,23 @@ public class FlagsBorderPatrol extends JavaPlugin {
                         player.setAllowFlight(true);
                     }
                 } else {
-                    if (!player.hasPermission(flag.getBypassPermission()) || !areaTo.hasTrust(flag, player)) {
+                    if (player.hasPermission(flag.getBypassPermission()) || areaTo.hasTrust(flag, player)) {
                         // Player can continue to fly because of permission or trust.
-
-                        // Player entered a flight disabled area
-                        // We need to take them out of the sky gently.
-                        // (of course if we didn't, it sure would be fun to watch)
-                        if (player.isFlying()) {
-                            // Teleport the player to the ground so they don't die.
-                            Location tpLoc = player.getWorld()
-                                    .getHighestBlockAt(player.getLocation())
-                                    .getLocation().add(0, 1, 0);
-                            player.teleport(tpLoc, TeleportCause.PLUGIN);
-                            player.setFlying(false);
-                        }
-                        player.setAllowFlight(false);
+                        return;
                     }
+
+                    // Player entered a flight disabled area
+                    // We need to take them out of the sky gently.
+                    // (of course if we didn't, it sure would be fun to watch)
+                    if (player.isFlying()) {
+                        // Teleport the player to the ground so they don't die.
+                        Location tpLoc = player.getWorld()
+                                .getHighestBlockAt(player.getLocation())
+                                .getLocation().add(0, 1, 0);
+                        player.teleport(tpLoc, TeleportCause.PLUGIN);
+                        player.setFlying(false);
+                    }
+                    player.setAllowFlight(false);
                 }
             }
 		}
