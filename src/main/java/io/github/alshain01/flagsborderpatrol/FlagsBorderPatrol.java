@@ -126,7 +126,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		 * Event handler for AllowEntry and AllowLeave
 		 */
 		@EventHandler(ignoreCancelled = true)
-		private void onPlayerChangeArea(PlayerChangedUniqueAreaEvent e) {
+		private void onPlayerChangedUniqueArea(PlayerChangedUniqueAreaEvent e) {
 			if (!canCrossBorder(e.getArea(), e.getPlayer(),	flags.get("AllowEntry"), true)
 					|| !canCrossBorder(e.getAreaLeft(), e.getPlayer(), flags.get("AllowLeave"), true)) {
 				e.setCancelled(true);
@@ -137,72 +137,61 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		 * Event Handler for NotifyEnter and NotifyExit
 		 */
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onPlayerChangeAreaMonitor(PlayerChangedUniqueAreaEvent e) {
+		private void onPlayerChangeUniqueAreaMonitor(PlayerChangedUniqueAreaEvent e) {
 			final Area areaTo = e.getArea();
 			final Area areaFrom = e.getAreaLeft();
 			final Player player = e.getPlayer();
 
 			// Don't welcome them to the area and then forcibly remove them.
-			if (canCrossBorder(areaTo, e.getPlayer(), flags.get("AllowEntry"), false)
-					&& canCrossBorder(areaFrom, e.getPlayer(), flags.get("AllowLeave"), false)) {
+			if (!canCrossBorder(areaTo, e.getPlayer(), flags.get("AllowEntry"), false)
+					|| !canCrossBorder(areaFrom, e.getPlayer(), flags.get("AllowLeave"), false)) { return; }
 
-				// Player has not been forcibly returned.
-				// Check to see if we should notify them.
-				// Don't bother the area owner.
-				final Flag ne = flags.get("NotifyEnter");
-				final Flag nx = flags.get("NotifyExit");
-				if (ne != null && areaTo.getValue(ne, false)
-						&& !areaTo.getOwners().contains(player.getName())) {
-					// Send the message
-					e.getPlayer().sendMessage(areaTo.getMessage(ne, player.getName()));
-				} else if (nx != null && areaFrom.getValue(nx, false)
-						// Only send one notification at any time.
-						&& !areaFrom.getOwners().contains(player.getName())) { 
-					// Send the message
-					e.getPlayer().sendMessage(areaFrom.getMessage(nx, player.getName()));
-				}
-			}
-		}
+            // Player has not been forcibly returned.
+            // Check to see if we should notify them.
+            // Don't bother the area owner.
+            final Flag ne = flags.get("NotifyEnter");
+            final Flag nx = flags.get("NotifyExit");
+            if (ne != null && areaTo.getValue(ne, false)
+                    && !areaTo.getOwners().contains(player.getName())) {
+                // Send the message
+                e.getPlayer().sendMessage(areaTo.getMessage(ne, player.getName()));
+            } else if (nx != null && areaFrom.getValue(nx, false)
+                    // Only send one notification at any time.
+                    && !areaFrom.getOwners().contains(player.getName())) {
+                // Send the message
+                e.getPlayer().sendMessage(areaFrom.getMessage(nx, player.getName()));
+            }
 
-		/*
-		 * Event Handler for Flight
-		 */
-		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-		private void onPlayerChangedArea(PlayerChangedUniqueAreaEvent e) {
-			if (Bukkit.getServer().getAllowFlight()) { return; }
+            /*
+		     * Event Handler for Flight
+		     */
+            final Flag flag = flags.get("Flight");
+            if (flag != null) {
+                if (areaTo.getValue(flag, false)) {
+                    // Player entered a flight allowed area
+                    if (!player.getAllowFlight()) {
+                        player.sendMessage(areaTo.getMessage(flag));
+                        player.setAllowFlight(true);
+                    }
+                } else {
+                    if (!player.hasPermission(flag.getBypassPermission()) || !areaTo.hasTrust(flag, player)) {
+                        // Player can continue to fly because of permission or trust.
 
-			final Player player = e.getPlayer();
-			if (player.getGameMode() == GameMode.CREATIVE) { return; }
-
-			final Flag flag = flags.get("Flight");
-			if (flag == null) {	return;	}
-
-            Area area = e.getArea();
-			if (area.getValue(flag, false)) {
-				// Player entered a flight allowed area
-				if (!player.getAllowFlight()) {
-					player.sendMessage(area.getMessage(flag));
-					player.setAllowFlight(true);
-				}
-			} else {
-				if (player.hasPermission(flag.getBypassPermission()) || area.hasTrust(flag, player)) {
-                    // Player can continue to fly because of permission or trust.
-					return;
-				}
-
-				// Player entered a flight disabled area
-				// We need to take them out of the sky gently.
-				// (of course if we didn't, it sure would be fun to watch)
-				if (player.isFlying()) {
-					// Teleport the player to the ground so they don't die.
-					Location tpLoc = player.getWorld()
-                            .getHighestBlockAt(player.getLocation())
-                            .getLocation().add(0, 1, 0);
-					player.teleport(tpLoc, TeleportCause.PLUGIN);
-					player.setFlying(false);
-				}
-				player.setAllowFlight(false);
-			}
+                        // Player entered a flight disabled area
+                        // We need to take them out of the sky gently.
+                        // (of course if we didn't, it sure would be fun to watch)
+                        if (player.isFlying()) {
+                            // Teleport the player to the ground so they don't die.
+                            Location tpLoc = player.getWorld()
+                                    .getHighestBlockAt(player.getLocation())
+                                    .getLocation().add(0, 1, 0);
+                            player.teleport(tpLoc, TeleportCause.PLUGIN);
+                            player.setFlying(false);
+                        }
+                        player.setAllowFlight(false);
+                    }
+                }
+            }
 		}
 	}
 }
