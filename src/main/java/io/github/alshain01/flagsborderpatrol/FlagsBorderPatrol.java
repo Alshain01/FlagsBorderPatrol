@@ -31,9 +31,7 @@ import io.github.alshain01.flags.events.PlayerChangedUniqueAreaEvent;
 
 import java.util.*;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -159,12 +157,36 @@ public class FlagsBorderPatrol extends JavaPlugin {
                 e.getPlayer().sendMessage(areaFrom.getMessage(nx, player.getName()));
             }
 
+            Flag flag = flags.get("Doorbell");
+            if(flag != null && areaTo.getValue(flag, false) && !areaTo.getOwners().contains(player.getName())) {
+                // Play first note
+                for(String s : areaTo.getOwners()) {
+                    final Player owner = Bukkit.getPlayer(s);
+                    if(owner != null) {
+                        owner.playNote(player.getLocation(), Instrument.PIANO, new Note(1, Note.Tone.A, true) );
+                    }
+                }
+                // Play second note
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        // Repeat to avoid scheduling a task per owner
+                        for(String s : areaTo.getOwners()) {
+                            final Player owner = Bukkit.getPlayer(s);
+                            if(owner != null) {
+                                owner.playNote(player.getLocation(), Instrument.PIANO, new Note(0, Note.Tone.A, true) );
+                            }
+                        }
+                    }
+                }.runTaskLater(plugin, 10);
+            }
+
             /*
 		     * Event Handler for Flight
              */
             if (!Bukkit.getServer().getAllowFlight() && player.getGameMode() != GameMode.CREATIVE) {
                 // The server doesn't allow flight all the time and the game mode is not creative
-                final Flag flag = flags.get("Flight");
+                flag = flags.get("Flight");
                 if (areaTo.getValue(flag, false)) {
                     // Player entered a flight allowed area
                     if (!player.getAllowFlight()) {
