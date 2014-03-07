@@ -163,7 +163,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
                 for(String s : areaTo.getOwners()) {
                     final Player owner = Bukkit.getPlayer(s);
                     if(owner != null) {
-                        owner.playNote(player.getLocation(), Instrument.PIANO, new Note(1, Note.Tone.A, true) );
+                        owner.playNote(owner.getLocation(), Instrument.PIANO, new Note(0, Note.Tone.G, true) );
                     }
                 }
                 // Play second note
@@ -174,7 +174,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
                         for(String s : areaTo.getOwners()) {
                             final Player owner = Bukkit.getPlayer(s);
                             if(owner != null) {
-                                owner.playNote(player.getLocation(), Instrument.PIANO, new Note(0, Note.Tone.A, true) );
+                                owner.playNote(owner.getLocation(), Instrument.PIANO, new Note(1, Note.Tone.E, false) );
                             }
                         }
                     }
