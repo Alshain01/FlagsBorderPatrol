@@ -21,6 +21,10 @@ Flag:
     Player: true
     AreaMessage: '&b{Player}, you are now leaving &6{Owner}&b''s {AreaType}.'
     WorldMessage: '&b{Player}, you are now leaving &6{World}&b.'
+  Doorbell:
+    Description: Plays a two tone doorbell for all owners when entering.
+    Default: false
+    Player: false
   Flight:
     Description: Allows flight within the area.
     Default: false
