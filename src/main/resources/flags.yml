@@ -1,28 +1,28 @@
 Flag:
   AllowEntry:
-    Description: Allows or denies player entry into the area.
+    Description: Toggles the ability to enter the area for non-owners.
     Player: true
     AreaMessage: '&c{Player}, you are not allowed in &6{Owner}&c''s {AreaType}.'
     WorldMessage: '&c{Player}, you are not allowed to enter &6{World}&c.'
   AllowLeave:
-    Description: Allows or denies a player from leaving a area.
+    Description: Toggles the ability to leave the area for non-owners.
     Player: true
     AreaMessage: '&c{Player}, you are not allowed to leave &6{Owner}&c''s {AreaType}.'
     WorldMessage: '&c{Player}, you are not allowed to leave &6{World}&c.'
   NotifyEnter:
-    Description: Area entry notifications for non-owners.
+    Description: Toggles entry messages for non-owners.
     Default: false
     Player: true
     AreaMessage: '&b{Player}, you are now entering &6{Owner}&b''s {AreaType}.'
     WorldMessage: '&b{Player}, you are now entering &6{World}&b.'
   NotifyExit:
-    Description: Area entry notifications for non-owners.
+    Description: Toggles exit messages for non-owners.
     Default: false
     Player: true
     AreaMessage: '&b{Player}, you are now leaving &6{Owner}&b''s {AreaType}.'
     WorldMessage: '&b{Player}, you are now leaving &6{World}&b.'
   Doorbell:
-    Description: Plays a two tone doorbell for all owners when entering.
+    Description: Plays a tone when a player enters the area for all owners.
     Default: false
     Player: false
   Flight:
