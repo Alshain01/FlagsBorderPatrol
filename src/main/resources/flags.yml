@@ -3,24 +3,24 @@ Flag:
     Description: Toggles the ability to enter the area for non-owners.
     Player: true
     AreaMessage: '&c{Player}, you are not allowed in &6{Owner}&c''s {AreaType}.'
-    WorldMessage: '&c{Player}, you are not allowed to enter &6{World}&c.'
+    WildernessMessage: '&c{Player}, you are not allowed to enter &6{World}&c.'
   AllowLeave:
     Description: Toggles the ability to leave the area for non-owners.
     Player: true
     AreaMessage: '&c{Player}, you are not allowed to leave &6{Owner}&c''s {AreaType}.'
-    WorldMessage: '&c{Player}, you are not allowed to leave &6{World}&c.'
+    WildernessMessage: '&c{Player}, you are not allowed to leave &6{World}&c.'
   NotifyEnter:
     Description: Toggles entry messages for non-owners.
     Default: false
     Player: true
     AreaMessage: '&b{Player}, you are now entering &6{Owner}&b''s {AreaType}.'
-    WorldMessage: '&b{Player}, you are now entering &6{World}&b.'
+    WildernessMessage: '&b{Player}, you are now entering &6{World}&b.'
   NotifyExit:
     Description: Toggles exit messages for non-owners.
     Default: false
     Player: true
     AreaMessage: '&b{Player}, you are now leaving &6{Owner}&b''s {AreaType}.'
-    WorldMessage: '&b{Player}, you are now leaving &6{World}&b.'
+    WildernessMessage: '&b{Player}, you are now leaving &6{World}&b.'
   Doorbell:
     Description: Plays a tone when a player enters the area for all owners.
     Default: false
@@ -30,4 +30,4 @@ Flag:
     Default: false
     Player: true
     AreaMessage: '&eFlight&b is now enabled.'
-    WorldMessage: '&eFlight&b is now enabled.'
+    WildernessMessage: '&eFlight&b is now enabled.'
