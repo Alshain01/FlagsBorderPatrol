@@ -43,6 +43,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static java.lang.Math.pow;
+
 /**
  * Flags Border Patrol - Module that adds border crossing flags to the plug-in Flags.
  */
@@ -173,7 +175,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
                 for(String s : (((Ownable) areaTo).getOwnerName())) {
                     final Player owner = Bukkit.getPlayer(s);
                     if(owner != null) {
-                        owner.playNote(player.getLocation(), Instrument.PIANO, new Note(1, Note.Tone.A, true) );
+                        owner.playSound(owner.getLocation(), Sound.NOTE_PIANO, 3.0F, (float)pow(2.0, ((double) 14 - 12.0) / 12.0));
                     }
                 }
                 // Play second note
@@ -184,11 +186,11 @@ public class FlagsBorderPatrol extends JavaPlugin {
                         for(String s : (((Ownable) areaTo).getOwnerName())) {
                             final Player owner = Bukkit.getPlayer(s);
                             if(owner != null) {
-                                owner.playNote(player.getLocation(), Instrument.PIANO, new Note(0, Note.Tone.A, true) );
+                                owner.playSound(owner.getLocation(), Sound.NOTE_PIANO, 6.0F, (float)pow(2.0, ((double) 10 - 12.0) / 12.0));
                             }
                         }
                     }
-                }.runTaskLater(plugin, 10);
+                }.runTaskLater(plugin, 4);
             }
 
             /*

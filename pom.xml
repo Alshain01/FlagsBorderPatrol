@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.alshain01.flagsborderpatrol</groupId>
 	<artifactId>FlagsBorderPatrol</artifactId>
-	<version>1.4.1</version>
+	<version>1.4.2</version>
 	<name>${project.artifactId}</name>
 	<description>Module that adds border crossing flags to the Flags plugin.</description>
 	<url>http://dev.bukkit.org/bukkit-plugins/flags/</url>
