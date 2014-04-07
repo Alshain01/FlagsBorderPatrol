@@ -122,14 +122,14 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			return false;
 		}
 
-        private boolean isOwner(Area area, Player player) {
+        private boolean notOwner(Area area, Player player) {
             if(area instanceof Ownable) {
                 Ownable oArea = (Ownable) area;
                 if(oArea.getOwnerName().contains(player.getName())) {
-                    return true;
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
 		/*
@@ -161,16 +161,16 @@ public class FlagsBorderPatrol extends JavaPlugin {
             // Don't bother the area owner.
             final Flag ne = flags.get("NotifyEnter");
             final Flag nx = flags.get("NotifyExit");
-            if (ne != null && areaTo.getValue(ne, false) && !isOwner(areaTo, player)) {
+            if (ne != null && areaTo.getValue(ne, false) && notOwner(areaTo, player)) {
                 // Send the message
                 e.getPlayer().sendMessage(areaTo.getMessage(ne, player));
-            } else if (nx != null && areaFrom.getValue(nx, false) && !isOwner(areaFrom, player)) {
+            } else if (nx != null && areaFrom.getValue(nx, false) && notOwner(areaFrom, player)) {
                 // Only send one notification at any time.
                 e.getPlayer().sendMessage(areaFrom.getMessage(nx, player));
             }
 
             Flag flag = flags.get("Doorbell");
-            if(areaTo instanceof Ownable && flag != null && areaTo.getValue(flag, false) && !isOwner(areaTo, player)) {
+            if(areaTo instanceof Ownable && flag != null && areaTo.getValue(flag, false) && notOwner(areaTo, player)) {
                 // Play first note
                 for(String s : (((Ownable) areaTo).getOwnerName())) {
                     final Player owner = Bukkit.getPlayer(s);
