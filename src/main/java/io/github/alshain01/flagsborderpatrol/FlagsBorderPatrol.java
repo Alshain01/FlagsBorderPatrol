@@ -122,6 +122,16 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			return false;
 		}
 
+        private boolean isOwner(Area area, Player player) {
+            if(area instanceof Ownable) {
+                Ownable oArea = (Ownable) area;
+                if(oArea.getOwnerName().contains(player.getName())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
 		/*
 		 * Event handler for AllowEntry and AllowLeave
 		 */
@@ -132,16 +142,6 @@ public class FlagsBorderPatrol extends JavaPlugin {
 				e.setCancelled(true);
 			}
 		}
-
-        private boolean isOwner(Area area, Player player) {
-            if(area instanceof Ownable) {
-                Ownable oArea = (Ownable) area;
-                if(oArea.getOwnerName().contains(player.getName())) {
-                    return true;
-                }
-            }
-            return false;
-        }
 
 		/*
 		 * Event Handler for NotifyEnter and NotifyExit
