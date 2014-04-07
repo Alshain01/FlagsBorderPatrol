@@ -59,11 +59,13 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		if (!pm.isPluginEnabled("Flags")) {
 			getLogger().severe("Flags was not found. Shutting down.");
 			pm.disablePlugin(this);
+            return;
 		}
 
 		if (!Flags.getBorderPatrolEnabled()) {
 			getLogger().severe("Flags Border Patrol is disabled. Shutting down.");
 			pm.disablePlugin(this);
+            return;
 		}
 
 		// Connect to the data file and register the flags
