@@ -23,15 +23,17 @@
  */
 package io.github.alshain01.flagsborderpatrol;
 
-import io.github.alshain01.flags.Flag;
+import io.github.alshain01.flags.api.Flag;
 import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.ModuleYML;
-import io.github.alshain01.flags.area.Area;
-import io.github.alshain01.flags.events.PlayerChangedUniqueAreaEvent;
+import io.github.alshain01.flags.api.FlagsAPI;
+import io.github.alshain01.flags.api.area.Area;
+import io.github.alshain01.flags.api.area.Ownable;
+import io.github.alshain01.flags.api.event.PlayerChangedUniqueAreaEvent;
 
 import java.util.*;
 
 import org.bukkit.*;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -63,7 +65,8 @@ public class FlagsBorderPatrol extends JavaPlugin {
 		}
 
 		// Connect to the data file and register the flags
-		Set<Flag> flags = Flags.getRegistrar().register(new ModuleYML(this, "flags.yml"), "BorderPatrol");
+        YamlConfiguration flagConfig = YamlConfiguration.loadConfiguration(getResource("flags.yml"));
+        Set<Flag> flags = FlagsAPI.getRegistrar().register(flagConfig, "BorderPatrol");
         Map<String, Flag> flagMap = new HashMap<String, Flag>();
         for(Flag f : flags) {
             flagMap.put(f.getName(), f);
@@ -112,7 +115,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
                         }
                     }
                 }.runTaskLater(plugin, 100);
-				player.sendMessage(area.getMessage(flag, player.getName()));
+				player.sendMessage(area.getMessage(flag, player));
 			}
 			return false;
 		}
@@ -127,6 +130,16 @@ public class FlagsBorderPatrol extends JavaPlugin {
 				e.setCancelled(true);
 			}
 		}
+
+        private boolean isOwner(Area area, Player player) {
+            if(area instanceof Ownable) {
+                Ownable oArea = (Ownable) area;
+                if(oArea.getOwnerName().contains(player.getName())) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
 		/*
 		 * Event Handler for NotifyEnter and NotifyExit
@@ -146,21 +159,18 @@ public class FlagsBorderPatrol extends JavaPlugin {
             // Don't bother the area owner.
             final Flag ne = flags.get("NotifyEnter");
             final Flag nx = flags.get("NotifyExit");
-            if (ne != null && areaTo.getValue(ne, false)
-                    && !areaTo.getOwners().contains(player.getName())) {
+            if (ne != null && areaTo.getValue(ne, false) && !isOwner(areaTo, player)) {
                 // Send the message
-                e.getPlayer().sendMessage(areaTo.getMessage(ne, player.getName()));
-            } else if (nx != null && areaFrom.getValue(nx, false)
-                    // Only send one notification at any time.
-                    && !areaFrom.getOwners().contains(player.getName())) {
-                // Send the message
-                e.getPlayer().sendMessage(areaFrom.getMessage(nx, player.getName()));
+                e.getPlayer().sendMessage(areaTo.getMessage(ne, player));
+            } else if (nx != null && areaFrom.getValue(nx, false) && !isOwner(areaFrom, player)) {
+                // Only send one notification at any time.
+                e.getPlayer().sendMessage(areaFrom.getMessage(nx, player));
             }
 
             Flag flag = flags.get("Doorbell");
-            if(flag != null && areaTo.getValue(flag, false) && !areaTo.getOwners().contains(player.getName())) {
+            if(areaTo instanceof Ownable && flag != null && areaTo.getValue(flag, false) && !isOwner(areaTo, player)) {
                 // Play first note
-                for(String s : areaTo.getOwners()) {
+                for(String s : (((Ownable) areaTo).getOwnerName())) {
                     final Player owner = Bukkit.getPlayer(s);
                     if(owner != null) {
                         owner.playNote(player.getLocation(), Instrument.PIANO, new Note(1, Note.Tone.A, true) );
@@ -171,7 +181,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
                     @Override
                     public void run() {
                         // Repeat to avoid scheduling a task per owner
-                        for(String s : areaTo.getOwners()) {
+                        for(String s : (((Ownable) areaTo).getOwnerName())) {
                             final Player owner = Bukkit.getPlayer(s);
                             if(owner != null) {
                                 owner.playNote(player.getLocation(), Instrument.PIANO, new Note(0, Note.Tone.A, true) );
