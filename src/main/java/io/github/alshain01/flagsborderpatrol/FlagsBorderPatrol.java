@@ -101,7 +101,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 			}
 
 			// Player can enter because of flag setting, permission, or trust.
-			if (area.getValue(flag, false)
+			if (area.getState(flag, false)
 					|| player.hasPermission(flag.getBypassPermission())
 					|| area.hasTrust(flag, player)) {
 				return true;
@@ -119,7 +119,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
                         }
                     }
                 }.runTaskLater(plugin, 100);
-				player.sendMessage(area.getMessage(flag, player));
+				player.sendMessage(area.getMessage(flag, player.getName()));
 			}
 			return false;
 		}
@@ -163,16 +163,16 @@ public class FlagsBorderPatrol extends JavaPlugin {
             // Don't bother the area owner.
             final Flag ne = flags.get("NotifyEnter");
             final Flag nx = flags.get("NotifyExit");
-            if (ne != null && areaTo.getValue(ne, false) && notOwner(areaTo, player)) {
+            if (ne != null && areaTo.getState(ne, false) && notOwner(areaTo, player)) {
                 // Send the message
-                e.getPlayer().sendMessage(areaTo.getMessage(ne, player));
-            } else if (nx != null && areaFrom.getValue(nx, false) && notOwner(areaFrom, player)) {
+                e.getPlayer().sendMessage(areaTo.getMessage(ne, player.getName()));
+            } else if (nx != null && areaFrom.getState(nx, false) && notOwner(areaFrom, player)) {
                 // Only send one notification at any time.
-                e.getPlayer().sendMessage(areaFrom.getMessage(nx, player));
+                e.getPlayer().sendMessage(areaFrom.getMessage(nx, player.getName()));
             }
 
             Flag flag = flags.get("Doorbell");
-            if(areaTo instanceof Ownable && flag != null && areaTo.getValue(flag, false) && notOwner(areaTo, player)) {
+            if(areaTo instanceof Ownable && flag != null && areaTo.getState(flag, false) && notOwner(areaTo, player)) {
                 // Play first note
                 for(String s : (((Ownable) areaTo).getOwnerName())) {
                     final Player owner = Bukkit.getPlayer(s);
@@ -201,7 +201,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
             if (!Bukkit.getServer().getAllowFlight() && player.getGameMode() != GameMode.CREATIVE) {
                 // The server doesn't allow flight all the time and the game mode is not creative
                 flag = flags.get("Flight");
-                if (areaTo.getValue(flag, false)) {
+                if (areaTo.getState(flag, false)) {
                     // Player entered a flight allowed area
                     if (!player.getAllowFlight()) {
                         player.sendMessage(areaTo.getMessage(flag));
