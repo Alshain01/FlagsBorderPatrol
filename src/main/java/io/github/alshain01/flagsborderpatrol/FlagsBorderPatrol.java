@@ -70,7 +70,7 @@ public class FlagsBorderPatrol extends JavaPlugin {
 
 		// Connect to the data file and register the flags
         YamlConfiguration flagConfig = YamlConfiguration.loadConfiguration(getResource("flags.yml"));
-        Set<Flag> flags = FlagsAPI.getRegistrar().register(flagConfig, "BorderPatrol");
+        Collection<Flag> flags = FlagsAPI.getRegistrar().registerFlag(flagConfig, "BorderPatrol");
         Map<String, Flag> flagMap = new HashMap<String, Flag>();
         for(Flag f : flags) {
             flagMap.put(f.getName(), f);
