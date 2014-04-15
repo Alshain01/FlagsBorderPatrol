@@ -56,12 +56,6 @@ public class FlagsBorderPatrol extends JavaPlugin {
 	public void onEnable() {
 		final PluginManager pm = Bukkit.getServer().getPluginManager();
 
-		if (!pm.isPluginEnabled("Flags")) {
-			getLogger().severe("Flags was not found. Shutting down.");
-			pm.disablePlugin(this);
-            return;
-		}
-
 		if (!Flags.getBorderPatrolEnabled()) {
 			getLogger().severe("Flags Border Patrol is disabled. Shutting down.");
 			pm.disablePlugin(this);
